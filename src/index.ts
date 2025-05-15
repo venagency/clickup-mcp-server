@@ -23,35 +23,35 @@
  * For full documentation and usage examples, please refer to the README.md file.
  */
 
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { configureServer, server } from "./server.js";
-import { clickUpServices } from "./services/shared.js";
-import { info, error } from "./logger.js";
-import config from "./config.js";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { startSSEServer } from "./sse_server.js";
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { configureServer, server } from './server.js';
+import { clickUpServices } from './services/shared.js';
+import { info, error } from './logger.js';
+import config from './config.js';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { startSSEServer } from './sse_server.js';
 
 // Get directory name for module paths
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Handle uncaught exceptions
-process.on("uncaughtException", (err) => {
-  error("Uncaught Exception", { message: err.message, stack: err.stack });
+process.on('uncaughtException', err => {
+  error('Uncaught Exception', { message: err.message, stack: err.stack });
   process.exit(1);
 });
 
 // Handle unhandled promise rejections
-process.on("unhandledRejection", (reason, promise) => {
-  error("Unhandled Rejection", { reason });
+process.on('unhandledRejection', (reason, promise) => {
+  error('Unhandled Rejection', { reason });
   process.exit(1);
 });
 
 async function startStdioServer() {
-  info("Starting ClickUp MCP Server...");
+  info('Starting ClickUp MCP Server...');
 
   // Log essential information about the environment
-  info("Server environment", {
+  info('Server environment', {
     pid: process.pid,
     node: process.version,
     os: process.platform,
@@ -59,15 +59,15 @@ async function startStdioServer() {
   });
 
   // Configure the server with all handlers
-  info("Configuring server request handlers");
+  info('Configuring server request handlers');
   await configureServer();
 
   // Connect using stdio transport
-  info("Connecting to MCP stdio transport");
+  info('Connecting to MCP stdio transport');
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  info("Server startup complete - ready to handle requests");
+  info('Server startup complete - ready to handle requests');
 }
 
 /**
@@ -81,7 +81,7 @@ async function main() {
       await startStdioServer();
     }
   } catch (err) {
-    error("Error during server startup", {
+    error('Error during server startup', {
       message: err.message,
       stack: err.stack,
     });
@@ -89,7 +89,7 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  error("Unhandled server error", { message: err.message, stack: err.stack });
+main().catch(err => {
+  error('Unhandled server error', { message: err.message, stack: err.stack });
   process.exit(1);
 });

@@ -8,11 +8,11 @@
  * across the application to ensure consistent state.
  */
 
-import { createClickUpServices, ClickUpServices } from "./clickup/index.js";
-import config from "../config.js";
-import { Logger } from "../logger.js";
+import { createClickUpServices, ClickUpServices } from './clickup/index.js';
+import config from '../config.js';
+import { Logger } from '../logger.js';
 
-const logger = new Logger("SharedServices");
+const logger = new Logger('SharedServices');
 
 // Singleton instances
 let clickUpServicesInstance: ClickUpServices | null = null;
@@ -22,7 +22,7 @@ let clickUpServicesInstance: ClickUpServices | null = null;
  */
 function getClickUpServices(): ClickUpServices {
   if (!clickUpServicesInstance) {
-    logger.info("Creating shared ClickUp services singleton");
+    logger.info('Creating shared ClickUp services singleton');
 
     // Create the services instance
     clickUpServicesInstance = createClickUpServices({
@@ -31,8 +31,8 @@ function getClickUpServices(): ClickUpServices {
     });
 
     // Log what services were initialized with more clarity
-    logger.info("Services initialization complete", {
-      services: Object.keys(clickUpServicesInstance).join(", "),
+    logger.info('Services initialization complete', {
+      services: Object.keys(clickUpServicesInstance).join(', '),
       teamId: config.clickupTeamId,
     });
   }
