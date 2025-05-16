@@ -291,7 +291,6 @@ server.tool(
       .describe("New status. Must be valid for the task's current list."),
     priority: z
       .number()
-      .nullable()
       .optional()
       .describe(
         'New priority: 1 (urgent) to 4 (low). Set null to clear priority.'
