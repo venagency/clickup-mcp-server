@@ -59,6 +59,61 @@ Additionally, you can use the `DISABLED_TOOLS` environment variable or `--env DI
 
 Please disable tools you don't need if you are having issues with the number of tools or any context limitations
 
+## Running with SSE Support
+
+Server can be run in SSE (Server-Sent Events) mode by setting the following environment variables:
+
+```json
+{
+  "mcpServers": {
+    "ClickUp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@taazkareem/clickup-mcp-server@latest"
+      ],
+      "env": {
+        "CLICKUP_API_KEY": "your-api-key",
+        "CLICKUP_TEAM_ID": "your-team-id",
+        "ENABLE_SSE": "true",
+        "PORT": "8000"  // Optional, defaults to 3231
+      }
+    }
+  }
+}
+```
+
+Or via command line:
+
+`npx -y @taazkareem/clickup-mcp-server@latest --env CLICKUP_API_KEY=your-api-key --env CLICKUP_TEAM_ID=your-team-id --env ENABLE_SSE=true --env PORT=8000`
+
+## Docker-compose example 
+```yaml
+version: '3.8'
+
+services:
+  clickup-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3231:8000'
+    environment:
+      - CLICKUP_API_KEY=${CLICKUP_API_KEY}
+      - CLICKUP_TEAM_ID=${CLICKUP_TEAM_ID}
+      - ENABLE_SSE=true
+      - LOG_LEVEL=info
+      - DOCUMENT_SUPPORT=true
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+```
 ## Features
 
 | 📝 Task Management                                                                                                                                                                                                                                                   | 🏷️ Tag Management                                                                                                                                                                                                                                                        |
