@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+- Added member management tools: `getWorkspaceMembers`, `findMemberByName`, and `resolveAssignees`.
+- Task creation now supports the `assignees` parameter, allowing assignment of users at creation time.
+- Improved error handling and response formatting for member and task handlers.
+- Refactored imports and code organization for maintainability.
+
 ## v0.7.2 (2025-04-25)
 
 ### 🛠️ Bug Fixes
