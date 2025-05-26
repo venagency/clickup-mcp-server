@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx typescript@latest tsc:*)",
+      "Bash(./node_modules/.bin/tsc)",
+      "Bash(npm install)"
+    ],
+    "deny": []
+  }
+}

@@ -13,7 +13,8 @@ import {
   ClickUpFolder,
   ClickUpList,
   WorkspaceTree,
-  WorkspaceNode
+  WorkspaceNode,
+  CreateSpaceData
 } from './types.js';
 import { Logger } from '../../logger.js';
 
@@ -462,6 +463,104 @@ export class WorkspaceService extends BaseClickUpService {
     } catch (error) {
       console.error('Error getting workspace members:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Create a new space in the workspace
+   * @param spaceData - The data for creating the space
+   * @returns - Promise resolving to the created space
+   */
+  async createSpace(spaceData: CreateSpaceData): Promise<ClickUpSpace> {
+    try {
+      // Validate space data
+      if (!spaceData.name) {
+        throw new ClickUpServiceError(
+          'Space name is required',
+          ErrorCode.INVALID_PARAMETER
+        );
+      }
+
+      logger.info(`Creating new space: ${spaceData.name}`);
+
+      const response = await this.makeRequest(async () => {
+        const result = await this.client.post(`/team/${this.teamId}/space`, spaceData);
+        return result.data;
+      });
+
+      logger.info(`Successfully created space: ${response.name} (ID: ${response.id})`);
+
+      // Clear the cached hierarchy since we've added a new space
+      this.clearWorkspaceHierarchy();
+
+      return response;
+    } catch (error) {
+      throw this.handleError(error, `Failed to create space: ${spaceData.name}`);
+    }
+  }
+
+  /**
+   * Update an existing space
+   * @param spaceId - The ID of the space to update
+   * @param updateData - The data to update (name, features, etc.)
+   * @returns - Promise resolving to the updated space
+   */
+  async updateSpace(spaceId: string, updateData: Partial<CreateSpaceData>): Promise<ClickUpSpace> {
+    try {
+      // Validate spaceId
+      if (!spaceId) {
+        throw new ClickUpServiceError(
+          'Space ID is required',
+          ErrorCode.INVALID_PARAMETER
+        );
+      }
+
+      logger.info(`Updating space: ${spaceId}`);
+
+      const response = await this.makeRequest(async () => {
+        const result = await this.client.put(`/space/${spaceId}`, updateData);
+        return result.data;
+      });
+
+      logger.info(`Successfully updated space: ${response.name} (ID: ${response.id})`);
+
+      // Clear the cached hierarchy since we've updated a space
+      this.clearWorkspaceHierarchy();
+
+      return response;
+    } catch (error) {
+      throw this.handleError(error, `Failed to update space with ID ${spaceId}`);
+    }
+  }
+
+  /**
+   * Delete a space
+   * @param spaceId - The ID of the space to delete
+   * @returns - Promise resolving when the space is deleted
+   */
+  async deleteSpace(spaceId: string): Promise<void> {
+    try {
+      // Validate spaceId
+      if (!spaceId) {
+        throw new ClickUpServiceError(
+          'Space ID is required',
+          ErrorCode.INVALID_PARAMETER
+        );
+      }
+
+      logger.info(`Deleting space: ${spaceId}`);
+
+      await this.makeRequest(async () => {
+        const result = await this.client.delete(`/space/${spaceId}`);
+        return result.data;
+      });
+
+      logger.info(`Successfully deleted space: ${spaceId}`);
+
+      // Clear the cached hierarchy since we've deleted a space
+      this.clearWorkspaceHierarchy();
+    } catch (error) {
+      throw this.handleError(error, `Failed to delete space with ID ${spaceId}`);
     }
   }
 }

@@ -92,6 +92,12 @@ import {
   resolveAssigneesTool, handleResolveAssignees
 } from "./tools/member.js";
 
+import {
+  createSpaceTool, handleCreateSpace,
+  updateSpaceTool, handleUpdateSpace,
+  deleteSpaceTool, handleDeleteSpace
+} from "./tools/space.js";
+
 import { Logger } from "./logger.js";
 import { clickUpServices } from "./services/shared.js";
 
@@ -178,6 +184,9 @@ export function configureServer() {
         getWorkspaceMembersTool,
         findMemberByNameTool,
         resolveAssigneesTool,
+        createSpaceTool,
+        updateSpaceTool,
+        deleteSpaceTool,
         ...documentModule()
       ].filter(tool => !config.disabledTools.includes(tool.name))
     };
@@ -191,8 +200,8 @@ export function configureServer() {
 
   // Register CallTool handler with proper logging
   logger.info("Registering tool handlers", {
-    toolCount: 40,
-    categories: ["workspace", "task", "time-tracking", "list", "folder", "tag", "document"]
+    toolCount: 43,
+    categories: ["workspace", "task", "time-tracking", "list", "folder", "tag", "document", "space"]
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (req) => {
@@ -301,6 +310,12 @@ export function configureServer() {
           return handleFindMemberByName(params);
         case "resolve_assignees":
           return handleResolveAssignees(params);
+        case "create_space":
+          return handleCreateSpace(params, workspace);
+        case "update_space":
+          return handleUpdateSpace(params, workspace);
+        case "delete_space":
+          return handleDeleteSpace(params, workspace);
         default:
           logger.error(`Unknown tool requested: ${name}`);
           const error = new Error(`Unknown tool: ${name}`);
